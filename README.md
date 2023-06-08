@@ -29,19 +29,19 @@ This is a low-level component for magnify in React.
 Clone the project
 
 ```bash
-  git clone https://github.com/solguruz/react-magnifier.git
+  git clone https://github.com/solguruz/magnifier-react.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd react-calender
+  cd magnifier-react
 ```
 
 Install dependencies
 
 ```bash
-  npm install
+  yarn install
 ```
 
 ## Configuration
