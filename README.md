@@ -60,7 +60,7 @@ Install dependencies
 ## Usage/Examples
 
 ```javascript
-import { Magnifier } from 'solguruz-react-image-magnifier'
+import { Magnifier } from "solguruz-react-image-magnifier";
 
 const App = () => {
   return <Magnifier image={IMAGE_PATH} />;
