@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 
-const Magnifier = (props: {
+interface Props {
   image: string
   width?: number | string
   zoom?: number
@@ -8,44 +8,40 @@ const Magnifier = (props: {
   magnifierHeight?: number
   borderWidth?: number
   borderColor?: string
-}) => {
-  const {
-    image,
-    width = '100%',
-    zoom = 2,
-    magnifierWidth = 150,
-    magnifierHeight = 150,
-    borderWidth = 2,
-    borderColor = 'white',
-  } = props
+}
 
-  const [left, setLeft] = useState(0)
-  const [top, setTop] = useState(0)
-  const [imageZoom, setImageZoom] = useState(1)
+const Magnifier = (props: Props) => {
   const [magnifierVisible, setMagnifierVisible] = useState(false)
   const [magnifierImageLeft, setMagnifierImageLeft] = useState(0)
   const [magnifierImageTop, setMagnifierImageTop] = useState(0)
+  const [imageZoom, setImageZoom] = useState(1)
+  const [left, setLeft] = useState(0)
+  const [top, setTop] = useState(0)
 
-  const imageDom = useRef<any>()
+  const imageDom = useRef<HTMLImageElement | null>(null)
 
-  const onHover = (e: any) => {
+  const { image, width = '100%', zoom = 2, magnifierWidth = 150, magnifierHeight = 150, borderWidth = 2, borderColor = 'white' } = props
+
+  const onHover = (e: React.MouseEvent<HTMLImageElement>) => {
     const { offsetX, offsetY } = e.nativeEvent
     const mouseTop = offsetY
     const mouseLeft = offsetX
-    const { width, naturalWidth } = imageDom.current
+    if (imageDom.current) {
+      const { width, naturalWidth } = imageDom.current
 
-    const imageZoom = (zoom * width) / naturalWidth
-    setImageZoom(imageZoom)
+      const imageZoom = (zoom * width) / naturalWidth
+      setImageZoom(imageZoom)
 
-    const left = mouseLeft - magnifierWidth / 2 - borderWidth
-    const top = mouseTop - magnifierHeight / 2 - borderWidth
-    setLeft(left)
-    setTop(top)
+      const left = mouseLeft - magnifierWidth / 2 - borderWidth
+      const top = mouseTop - magnifierHeight / 2 - borderWidth
+      setLeft(left)
+      setTop(top)
 
-    const magnifierImageLeft = magnifierWidth / 2 + borderWidth - zoom * mouseLeft
-    const magnifierImageTop = magnifierHeight / 2 + borderWidth - zoom * mouseTop
-    setMagnifierImageLeft(magnifierImageLeft)
-    setMagnifierImageTop(magnifierImageTop)
+      const magnifierImageLeft = magnifierWidth / 2 + borderWidth - zoom * mouseLeft
+      const magnifierImageTop = magnifierHeight / 2 + borderWidth - zoom * mouseTop
+      setMagnifierImageLeft(magnifierImageLeft)
+      setMagnifierImageTop(magnifierImageTop)
+    }
   }
 
   return (
