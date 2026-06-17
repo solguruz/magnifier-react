@@ -23,38 +23,37 @@ const Magnifier = (props: MagnifierProps) => {
 
   const [left, setLeft] = useState(0)
   const [top, setTop] = useState(0)
-  const [imageZoom, setImageZoom] = useState(1)
+  const [bgWidth, setBgWidth] = useState(0)
+  const [bgHeight, setBgHeight] = useState(0)
+  const [bgPosX, setBgPosX] = useState(0)
+  const [bgPosY, setBgPosY] = useState(0)
   const [magnifierVisible, setMagnifierVisible] = useState(false)
-  const [magnifierImageLeft, setMagnifierImageLeft] = useState(0)
-  const [magnifierImageTop, setMagnifierImageTop] = useState(0)
 
   const imageDom = useRef<HTMLImageElement>(null)
 
   const onHover = (e: MouseEvent<HTMLImageElement>) => {
     if (!imageDom.current) return
 
-    const { offsetX, offsetY } = e.nativeEvent
-    const mouseTop = offsetY
-    const mouseLeft = offsetX
-    const { width, naturalWidth } = imageDom.current
+    const { offsetX: mouseLeft, offsetY: mouseTop } = e.nativeEvent
+    // rendered (on-screen) size of the image, regardless of its intrinsic size
+    const { width: renderedWidth, height: renderedHeight } = imageDom.current
 
-    const imageZoom = (zoom * width) / naturalWidth
-    setImageZoom(imageZoom)
+    // the magnified backdrop is the rendered image scaled up by `zoom`
+    setBgWidth(zoom * renderedWidth)
+    setBgHeight(zoom * renderedHeight)
 
-    const left = mouseLeft - magnifierWidth / 2 - borderWidth
-    const top = mouseTop - magnifierHeight / 2 - borderWidth
-    setLeft(left)
-    setTop(top)
+    // the lens follows the cursor, centered on it
+    setLeft(mouseLeft - magnifierWidth / 2 - borderWidth)
+    setTop(mouseTop - magnifierHeight / 2 - borderWidth)
 
-    const magnifierImageLeft = magnifierWidth / 2 + borderWidth - zoom * mouseLeft
-    const magnifierImageTop = magnifierHeight / 2 + borderWidth - zoom * mouseTop
-    setMagnifierImageLeft(magnifierImageLeft)
-    setMagnifierImageTop(magnifierImageTop)
+    // shift the backdrop so the point under the cursor sits at the lens center
+    setBgPosX(magnifierWidth / 2 - zoom * mouseLeft)
+    setBgPosY(magnifierHeight / 2 - zoom * mouseTop)
   }
 
   return (
     <div
-      style={{ width, position: 'relative', cursor: 'none' }}
+      style={{ width, position: 'relative', cursor: 'none', display: 'inline-block', lineHeight: 0 }}
       onMouseOut={() => {
         setMagnifierVisible(false)
       }}
@@ -62,15 +61,20 @@ const Magnifier = (props: MagnifierProps) => {
         if (!magnifierVisible) setMagnifierVisible(true)
       }}
     >
-      <img src={image} style={{ width: '100%' }} ref={imageDom} onMouseMove={onHover} alt='img' />
+      <img
+        src={image}
+        style={{ width: '100%', display: 'block', maxWidth: 'none' }}
+        ref={imageDom}
+        onMouseMove={onHover}
+        alt='img'
+      />
       <div
         className='magnifier'
         style={{
           position: 'absolute',
-          border: '1px solid  red',
+          borderStyle: 'solid',
           borderRadius: '50%',
-          boxShadow: '0 0 20px #000',
-          overflow: 'hidden',
+          boxShadow: '0 0 20px rgba(0, 0, 0, 0.5)',
           pointerEvents: 'none',
           display: magnifierVisible ? 'block' : 'none',
           left: left,
@@ -79,21 +83,12 @@ const Magnifier = (props: MagnifierProps) => {
           height: magnifierHeight,
           borderWidth,
           borderColor,
+          backgroundImage: `url(${image})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: `${bgWidth}px ${bgHeight}px`,
+          backgroundPosition: `${bgPosX}px ${bgPosY}px`,
         }}
-      >
-        <img
-          src={image}
-          className='magnifierImage'
-          style={{
-            position: 'absolute',
-            left: magnifierImageLeft,
-            top: magnifierImageTop,
-            transform: `scale(${imageZoom})`,
-            transformOrigin: 'left top',
-          }}
-          alt='img'
-        />
-      </div>
+      />
     </div>
   )
 }
