@@ -24,7 +24,21 @@ This is a low-level component for magnify in React.
 
 **Client:** React
 
-## Getting Started
+## Installation
+
+Install the package in your project with your preferred package manager:
+
+```bash
+# npm
+npm install solguruz-react-image-magnifier
+
+# yarn
+yarn add solguruz-react-image-magnifier
+```
+
+`react` (>= 18) is a peer dependency, so make sure it is installed in your project.
+
+## Local Development
 
 Clone the project
 
@@ -38,11 +52,30 @@ Go to the project directory
   cd magnifier-react
 ```
 
-Install dependencies
+Install dependencies (this project uses **yarn** — a `yarn.lock` is committed; do not use `npm install`):
 
 ```bash
   yarn install
 ```
+
+## Build
+
+The library ships dual ESM + CJS output, produced by two `tsc` passes (no bundler).
+
+```bash
+  yarn build       # full build — runs build:esm then build:cjs
+  yarn build:esm   # ESM build (tsc → dist/esm)
+  yarn build:cjs   # CommonJS build (tsc --module commonjs → dist/cjs)
+```
+
+Other useful scripts:
+
+```bash
+  yarn lint        # ESLint over all .{js,ts,jsx,tsx} files
+  yarn prettier    # format the source in place
+```
+
+> The `prepare` hook runs a full build automatically on `yarn install` and before publish, so a fresh install also compiles `dist/`.
 
 ## Configuration
 
@@ -59,11 +92,35 @@ Install dependencies
 
 ## Usage/Examples
 
-```javascript
-import { Magnifier } from "solguruz-react-image-magnifier";
+Import the `Magnifier` component and pass it the image URL. Only `image` is required — every other prop has a sensible default (see [Configuration](#configuration)).
+
+Basic usage:
+
+```jsx
+import { Magnifier } from 'solguruz-react-image-magnifier'
 
 const App = () => {
-  return <Magnifier image={IMAGE_PATH} />;
+  return <Magnifier image={IMAGE_PATH} />
+}
+```
+
+With custom configuration:
+
+```jsx
+import { Magnifier } from 'solguruz-react-image-magnifier'
+
+const App = () => {
+  return (
+    <Magnifier
+      image='https://example.com/photo.jpg'
+      zoom={3}
+      width={400}
+      magnifierWidth={180}
+      magnifierHeight={180}
+      borderWidth={3}
+      borderColor='black'
+    />
+  )
 }
 ```
 
@@ -104,16 +161,15 @@ Engineering Quality Solutions by employing technologies with Passion and Love | 
 
 Contributions are always welcome!
 
-See `contributing.md` for ways to get started.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the it workflow & contribution guidelines
 
-Please adhere to this project's `code of conduct`.
 
 ## License
 
 ```text
 MIT License
 
-Copyright (c) 2023 SolGuruz LLP
+Copyright (c) 2023 SolGuruz Pvt Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

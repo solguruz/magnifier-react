@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react'
+import { type MouseEvent, useRef, useState } from 'react'
 
-const Magnifier = (props: {
+type MagnifierProps = {
   image: string
   width?: number | string
   zoom?: number
@@ -8,7 +8,9 @@ const Magnifier = (props: {
   magnifierHeight?: number
   borderWidth?: number
   borderColor?: string
-}) => {
+}
+
+const Magnifier = (props: MagnifierProps) => {
   const {
     image,
     width = '100%',
@@ -26,9 +28,11 @@ const Magnifier = (props: {
   const [magnifierImageLeft, setMagnifierImageLeft] = useState(0)
   const [magnifierImageTop, setMagnifierImageTop] = useState(0)
 
-  const imageDom = useRef<any>()
+  const imageDom = useRef<HTMLImageElement>(null)
 
-  const onHover = (e: any) => {
+  const onHover = (e: MouseEvent<HTMLImageElement>) => {
+    if (!imageDom.current) return
+
     const { offsetX, offsetY } = e.nativeEvent
     const mouseTop = offsetY
     const mouseLeft = offsetX
@@ -55,7 +59,7 @@ const Magnifier = (props: {
         setMagnifierVisible(false)
       }}
       onMouseOver={() => {
-        !magnifierVisible && setMagnifierVisible(true)
+        if (!magnifierVisible) setMagnifierVisible(true)
       }}
     >
       <img src={image} style={{ width: '100%' }} ref={imageDom} onMouseMove={onHover} alt='img' />
